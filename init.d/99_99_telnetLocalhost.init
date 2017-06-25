@@ -1,0 +1,43 @@
+#!/mnt/bin/busybox sh
+#
+# © Copyright 1996-2013, SamyGO
+#
+#
+. /dtv/SGO.env
+
+stop_bootloop()
+{
+# emergency skript exit to prevent boot loop
+      for USB in ${1:- \
+         /dtv/usb/sd* } ; do
+         echo "checking $USB"
+         sleep 1
+         if [ -e $USB/STOP_TELNET ]; then
+            "STOP_TELNET found. Script exit..."
+            exit 1
+         fi
+      done
+}
+
+case $1 in 
+	start)
+	stop_bootloop # in testing phase. Just for protection.
+	
+	echo " " >> $LOGFILE 2>&1  
+	echo "+++++++++++++++++ TELNET LOCALHOST ++++++++++++++++" >> $LOGFILE 2>&1   
+	echo " " >> $LOGFILE 2>&1 
+	
+# true telnet
+	$SYSROOT/bin/busybox2 telnetd -b 127.0.0.1 -p 12723 -l $SYSROOT/bin/ash &  >> $LOGFILE 2>&1
+	sync
+
+	;;
+	stop)
+	;;
+	status)
+	;;
+	*)
+	echo "Usage: $0 {start|stop|status}" 1>&2
+	exit 0
+	;;
+esac
