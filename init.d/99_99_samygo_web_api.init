@@ -1,0 +1,44 @@
+#!/mnt/bin/busybox sh
+#
+# © Copyright 1996-2013, SamyGO
+#
+#
+. /dtv/SGO.env
+
+stop_bootloop()
+{
+# emergency skript exit to prevent boot loop
+      for USB in ${1:- \
+         /dtv/usb/sd* } ; do
+         echo "checking $USB"
+         sleep 1
+         if [ -e $USB/STOP_TELNET ]; then
+            "STOP_TELNET found. Script exit..."
+            exit 1
+         fi
+      done
+}
+
+case $1 in 
+	start)
+	stop_bootloop # in testing phase. Just for protection.
+	
+	#generate a challenge if none exists
+	if [ ! -s "/mnt/etc/samygo-web-api.challenge" ]; then
+		cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 48 | head -n 1 > /mnt/etc/samygo-web-api.challenge
+		echo "Generated a new challenge for the web api: " $(cat /mnt/etc/samygo-web-api.challenge)
+	fi
+	#copy the files to /dtv/cgi-bin
+	cp -ar /mnt/var/www/samygo-web-api/* /dtv/cgi-bin/
+	sync
+
+	;;
+	stop)
+	;;
+	status)
+	;;
+	*)
+	echo "Usage: $0 {start|stop|status}" 1>&2
+	exit 0
+	;;
+esac
