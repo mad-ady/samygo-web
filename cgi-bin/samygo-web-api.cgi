@@ -261,11 +261,7 @@ $KEYS= array(
     KEY_EXT41 => 254,
 );
 
-header("Content-Type: application/json; charset=UTF-8");
-
 // Parse arguments
-//var_dump($_SERVER);
-
 parse_str($_SERVER["QUERY_STRING"], $params);
 
 //read the local challenge
@@ -274,6 +270,7 @@ $challenge = trim(file_get_contents("/mnt/etc/samygo-web-api.challenge"));
 if($params['challenge'] == $challenge){
 	switch($params['action']){
 		case 'CHANNELINFO':
+			header("Content-Type: application/json; charset=UTF-8");
 			error_log("Processing CHANNELINFO");
 			if(getLock()){
 				$exec=`$SAMYGOSO -d -A -B -l "$LIBSDIR/libLogChannel.so" 2>/dev/null 1>&2`;
@@ -336,6 +333,7 @@ if($params['challenge'] == $challenge){
 			 }
 			 break;
 	    case 'KEY':
+			header("Content-Type: application/json; charset=UTF-8");
 			error_log("Processing KEY");
 			if(array_key_exists( 'key', $params)){
 				$key=null;
@@ -371,12 +369,62 @@ if($params['challenge'] == $challenge){
 				echo json_encode( array('error' => true, 'message' => "Key parameter missing"));
 			}
 			break;
+		case 'REBOOT':
+			header("Content-Type: application/json; charset=UTF-8");
+			error_log("Processing REBOOT");
+			echo json_encode( array('error' => false, 'message' => "Rebooting TV"));
+			#the TV reboots immediately and the socket might time out
+			$exec=`/sbin/micom reboot`;
+			break;
+		case 'SNAPSHOT':
+			error_log("Processing SNAPSHOT");
+			//see if TV is on or off by checking /dtv/tvIsSleeping
+			$file="";
+			if(! file_exists("/dtv/tvIsSleeping")){
+				#TV is on. Get a list of existing screenshots
+				$initialFiles = glob("/dtv/*.bmp");
+				#take the screenshot
+				if(getLock()){
+					$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libScreenShot.so PATH:/dtv  UPSIDE`;
+					releaseLock();
+					sleep(0.5);
+					#We need to find out  the filename
+					$currentFiles = glob("/dtv/*.bmp");
+					foreach ($currentFiles as $filename){
+						if(! array_key_exists($filename, $initialFiles)){
+							#this looks like a new file. Convert it to jpeg
+							$exec=`$BIN/cjpeg -q 95 $filename > /dtv/screenshot.jpg`;
+							#remove the bmp file
+							unlink("$filename");
+							$file="/dtv/screenshot.jpg";
+							break;
+						}
+					}
+				}
+				else{
+					#couldn't get a lock. Return a generic image
+					$file="/mnt/var/www/samygo-web-api/colorbars.jpg";
+				}
+			}
+			else{
+				#TV is off. No need to query it, just return a static image
+				$file="/mnt/var/www/samygo-web-api/colorbars.jpg";
+			}
+			
+			header("Content-Type: image/jpeg");
+			header("Content-Length: " . filesize($file));
+			$fp = fopen($file, 'rb');
+			fpassthru($fp);
+			exit;			
+			break;
 		default:
-			 echo json_encode( array('error' => true, 'message' => "Bad action ".$params['action']));
+			header("Content-Type: application/json; charset=UTF-8");
+			echo json_encode( array('error' => true, 'message' => "Bad action ".$params['action']));
 		
 	}
 }
 else{
+	header("Content-Type: application/json; charset=UTF-8");
 	#challenge doesn't match
 	echo json_encode( array('error' => true, 'message' => 'Bad request (challenge)') );
 }
