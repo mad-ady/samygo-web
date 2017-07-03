@@ -29,7 +29,16 @@ case $1 in
 		echo "Generated a new challenge for the web api: " $(cat /mnt/etc/samygo-web-api.challenge)
 	fi
 	#copy the files to /dtv/cgi-bin
-	cp -ar /mnt/var/www/samygo-web-api/* /dtv/cgi-bin/
+	cp -ar /mnt/var/www/samygo-web-api/*.cgi /dtv/cgi-bin/
+	
+	#if needed, copy cjpeg
+	if [ ! -f "/mnt/bin/cjpeg" ]; then
+		cp /mnt/var/www/samygo-web-api/cjpeg/cjpeg /mnt/bin
+	fi
+	if [ ! -f "/mnt/usr/lib/libjpeg.so.62" ]; then
+		cp /mnt/var/www/samygo-web-api/cjpeg/libjpeg.so.62 /mnt/usr/lib/
+	fi
+	
 	sync
 
 	;;

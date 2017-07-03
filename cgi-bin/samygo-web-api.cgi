@@ -386,8 +386,8 @@ if($params['challenge'] == $challenge){
 				#take the screenshot
 				if(getLock()){
 					$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libScreenShot.so PATH:/dtv  UPSIDE`;
+					sleep(1);
 					releaseLock();
-					sleep(0.5);
 					#We need to find out  the filename
 					$currentFiles = glob("/dtv/*.bmp");
 					foreach ($currentFiles as $filename){
