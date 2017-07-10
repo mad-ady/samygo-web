@@ -30,21 +30,20 @@ case $1 in
 	fi
 	#copy the files to /dtv/cgi-bin
 	cp -ar /mnt/var/www/samygo-web-api/*.cgi /dtv/cgi-bin/
-	
-	#if needed, copy cjpeg
-	if [ ! -f "/mnt/bin/cjpeg" ]; then
-		cp /mnt/var/www/samygo-web-api/cjpeg/cjpeg /mnt/bin
-	fi
-	if [ ! -f "/mnt/usr/lib/libjpeg.so.62" ]; then
-		cp /mnt/var/www/samygo-web-api/cjpeg/libjpeg.so.62 /mnt/usr/lib/
-	fi
-	
 	sync
+        echo "Activated web API"
 
 	;;
 	stop)
+        rm /dtv/cgi-bin/samygo-web-api.cgi
+        echo "Deactivated web API"
 	;;
 	status)
+        if [ -f "/dtv/cgi-bin/samygo-web-api.cgi" ]; then
+                echo "Web API is enabled"
+        else
+                echo "Web API is disabled"
+        fi
 	;;
 	*)
 	echo "Usage: $0 {start|stop|status}" 1>&2
