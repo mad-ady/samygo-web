@@ -374,6 +374,7 @@ if($params['challenge'] == $challenge){
 			error_log("Processing REBOOT");
 			echo json_encode( array('error' => false, 'message' => "Rebooting TV"));
 			#the TV reboots immediately and the socket might time out
+			$exec=`/mnt/bin/sync`;
 			$exec=`/sbin/micom reboot`;
 			break;
 		case 'SNAPSHOT':
