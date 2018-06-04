@@ -52,6 +52,13 @@ else
   echo "[MISSING]"
 fi
 
+echo -n " * libRunWidget: https://forum.samygo.tv/viewtopic.php?t=9306 "
+if [ -f "/mnt/opt/privateer/usr/libso/libRunWidget.so" ]; then
+  echo "[ FOUND ]"
+else
+  echo "[MISSING]"
+fi
+
 echo 
 echo "To start the web API and generate your key please run:"
 echo "  /mnt/etc/init.d/99_99_samygo_web_api.init start"
