@@ -418,6 +418,72 @@ if($params['challenge'] == $challenge){
 			fpassthru($fp);
 			exit;			
 			break;
+		case 'WIDGET':
+			error_log("Processing WIDGET");
+			header("Content-Type: application/json; charset=UTF-8");
+			//open the list of widgets and parse it
+			$widgetxml = simplexml_load_file('/mtd_rwcommon/common/WidgetMgr/info.xml');
+			if($widgetxml === FALSE){
+				echo json_encode( array('error' => true, 'message' => "Unable to read info.xml"));
+				exit;
+			}
+			$availableWidgets=array();
+			$availableWidgetsID=array();
+			foreach($widgetxml->widget as $widget){
+				error_log("Parsing widget ".$widget['name'].", ".$widget['id']);
+				$availableWidgets[((string)$widget['name'])] = (string)$widget['id'];
+				$availableWidgetsID[((string)$widget['id'])] = (string)$widget['name'];
+			}
+			//lookup though the widget ids registered with the system
+			if(array_key_exists( 'name', $params)){
+				$id=null;
+				if(! is_numeric($params['name'])){
+					//lookup the name in the XML
+					if(array_key_exists($params['name'], $availableWidgets)){
+						//we can start the widget
+						error_log("Starting widget ".$params['name']);
+						if(getLock()){
+							$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$availableWidgets[$params['name']]`;
+							sleep(1);
+							releaseLock();
+							echo json_encode( array('error' => false, 'message' => "Started widget"));
+							exit;
+						}
+						else{
+							echo json_encode( array('error' => true, 'message' => "Unable to get lock"));
+							exit;
+						}
+					}
+					else{
+						//complain
+						echo json_encode( array('error' => true, 'message' => "Unable to find widget"));
+						exit;
+					}
+				}
+				else{
+					//lookup the id in the XML
+					if(array_key_exists($params['name'], $availableWidgetsID)){
+						error_log("Starting widget ".$availableWidgetsID[$params['name']]);
+						if(getLock()){
+							$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$params['name']`;
+							sleep(1);
+							releaseLock();
+							echo json_encode( array('error' => false, 'message' => "Started widget"));
+							exit;
+						}
+						else{
+							echo json_encode( array('error' => true, 'message' => "Unable to get lock"));
+							exit;
+						}
+					}
+					else{
+						//complain
+						echo json_encode( array('error' => true, 'message' => "Unable to find widget"));
+						exit;
+					}
+				}
+			}
+			break;
 		default:
 			header("Content-Type: application/json; charset=UTF-8");
 			echo json_encode( array('error' => true, 'message' => "Bad action ".$params['action']));
