@@ -59,6 +59,13 @@ else
   echo "[MISSING]"
 fi
 
+echo -n " * libAlert: https://forum.samygo.tv/viewtopic.php?f=63&t=9099 "
+if [ -f "/mnt/opt/privateer/usr/libso/libAlert.so" ]; then
+  echo "[ FOUND ]"
+else
+  echo "[MISSING]"
+fi
+
 echo 
 echo "To start the web API and generate your key please run:"
 echo "  /mnt/etc/init.d/99_99_samygo_web_api.init start"
