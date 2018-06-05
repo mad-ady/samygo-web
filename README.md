@@ -7,6 +7,8 @@ Features:
 * Control the TV via samyGOrc with remote actions
 * Reboot the TV
 * Get a screenshot of what is on the screen via libScreenShot
+* Start a widget via libRunWidget
+* Display an onscreen message via libAlert
 * Compatibility with libSoftPowerOff (https://forum.samygo.tv/viewtopic.php?t=8987&start=230)
 
 Dependencies:
@@ -15,6 +17,8 @@ Dependencies:
 * samyGOrc: https://forum.samygo.tv/viewtopic.php?f=63&t=6395
 * libLogChannel: https://forum.samygo.tv/viewtopic.php?f=63&t=8717 
 * libScreenShot: https://forum.samygo.tv/viewtopic.php?t=9201 
+* libRunWidget: https://forum.samygo.tv/viewtopic.php?f=63&t=9306
+* libAlert: https://forum.samygo.tv/viewtopic.php?f=63&t=9099
 
 Installation:
 * Download to your rooted SamyGO TV:
@@ -72,4 +76,14 @@ The list and codes of supported keys are available inside the script in the $KEY
 * to get a snapshot from the TV request for action=SNAPSHOT:
 ```
 $ wget -O /tmp/image.jpg http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAkWPo5MzfxBFraI05C3FDorSPE7xiMLCVAQ40a&action=SNAPSHOT
+```
+
+* to run a widget on your TV request for action=WIDGET&name=YouTube (name is case-sensitive):
+
+```
+$ wget -O - http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAkWPo5MzfxBFraI05C3FDorSPE7xiMLCVAQ40a&action=WIDGET&name=YouTube
+```
+* to display an onscreen message use action=ALERT&message=This+is+a+test&type=CENTER. You can also use blinks=4&delay=1000 to blink for 4 seconds:
+```
+$ wget -O - http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAkWPo5MzfxBFraI05C3FDorSPE7xiMLCVAQ40a&action=ALERT&type=CENTER&message=This+is+a+test
 ```
