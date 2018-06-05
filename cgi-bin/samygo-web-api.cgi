@@ -488,6 +488,48 @@ if($params['challenge'] == $challenge){
 				}
 			}
 			break;
+		case 'ALERT':
+			error_log("Processing ALERT");
+			header("Content-Type: application/json; charset=UTF-8");
+			
+			if(array_key_exists( 'message', $params) && array_key_exists( 'type', $params)){
+				$message = $params['message'];
+				$type = $params['type'];
+				$blinks = $params['blinks'];
+				$delay = $params['delay'];
+				error_log("blinks: $blinks, delay: $delay");
+				if($type == 'TEXT' || $type == 'MSGBOX' || $type == 'SYSTEM' || $type == 'CENTER'){
+					$cmdline = "$SAMYGOSO -d -A -B -l $LIBSDIR/libAlert.so $type:'$message' ";
+					if(strlen($blinks) > 0 && is_numeric($blinks)){
+						$cmdline.="BLINKS:$blinks ";
+					}
+					if(strlen($delay) > 0 && is_numeric($delay)){
+						$cmdline.="DELAY:$delay ";
+					}
+					if(getLock()){
+						error_log("$cmdline");
+						$exec=`$cmdline`;
+						sleep(1);
+						releaseLock();
+						echo json_encode( array('error' => false, 'message' => "Displayed message"));
+						exit;
+					}
+					else{
+						echo json_encode( array('error' => true, 'message' => "Unable to get lock"));
+						exit;
+					}
+				}
+				else{
+					echo json_encode( array('error' => true, 'message' => "Invalid type"));
+					exit;
+				}
+			}
+			else{
+				//complain
+				echo json_encode( array('error' => true, 'message' => "Missing parameters for query"));
+				exit;
+			}
+			break;
 		default:
 			header("Content-Type: application/json; charset=UTF-8");
 			echo json_encode( array('error' => true, 'message' => "Bad action ".$params['action']));
