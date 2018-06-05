@@ -443,7 +443,9 @@ if($params['challenge'] == $challenge){
 						//we can start the widget
 						error_log("Starting widget ".$params['name']);
 						if(getLock()){
-							$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$availableWidgets[$params['name']]`;
+							$id=$availableWidgets[$params['name']];
+							error_log("$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$id");
+							$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$id`;
 							sleep(1);
 							releaseLock();
 							echo json_encode( array('error' => false, 'message' => "Started widget"));
@@ -465,7 +467,9 @@ if($params['challenge'] == $challenge){
 					if(array_key_exists($params['name'], $availableWidgetsID)){
 						error_log("Starting widget ".$availableWidgetsID[$params['name']]);
 						if(getLock()){
-							$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$params['name']`;
+							$id=$params['name'];
+							error_log("$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$id");
+							$exec=`$SAMYGOSO -d -T -B -l $LIBSDIR/libRunWidget.so ID:$id`;
 							sleep(1);
 							releaseLock();
 							echo json_encode( array('error' => false, 'message' => "Started widget"));
