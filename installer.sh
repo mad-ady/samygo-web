@@ -9,6 +9,9 @@ cp -a "$DIR/cgi-bin/samygo-web-api.cgi" /mnt/var/www/samygo-web-api/
 
 echo "Installing cjpeg dependency to /mnt"
 cp -a "$DIR/cjpeg/cjpeg" /mnt/bin/
+if [ ! -d "/mnt/usr/lib/" ]; then
+    mkdir -p /mnt/usr/lib/
+fi
 cp -a "$DIR/cjpeg/libjpeg.so.62" /mnt/usr/lib/
 
 echo "Installing startup script to /mnt/etc/init.d/"
