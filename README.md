@@ -65,6 +65,11 @@ $ wget -O - "http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAk
 $ wget -O - http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAkWPo5MzfxBFraI05C3FDorSPE7xiMLCVAQ40a&action=REBOOT
 ```
 
+* to shutdown TV request for action=SHUTDOWN: 
+```
+$ wget -O - http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAkWPo5MzfxBFraI05C3FDorSPE7xiMLCVAQ40a&action=SHUTDOWN
+```
+
 * to send key events request for action=KEY and key=KEY_1:
 ```
 $ wget -O - http://tv-ip:1080/cgi-bin/samygo-web-api.cgi?challenge=oyd4uIz5WWAkWPo5MzfxBFraI05C3FDorSPE7xiMLCVAQ40a&action=KEY&key=KEY_1
