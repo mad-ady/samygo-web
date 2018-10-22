@@ -377,6 +377,14 @@ if($params['challenge'] == $challenge){
 			$exec=`/mnt/bin/sync`;
 			$exec=`/sbin/micom reboot`;
 			break;
+		case 'SHUTDOWN':
+			header("Content-Type: application/json; charset=UTF-8");
+			error_log("Processing SHUTDOWN");
+			echo json_encode( array('error' => false, 'message' => "Shutdown TV"));
+			#the TV shutdown immediately and the socket might time out
+			$exec=`/mnt/bin/sync`;
+			$exec=`/sbin/micom shutdown`;
+			break;
 		case 'SNAPSHOT':
 			error_log("Processing SNAPSHOT");
 			//see if TV is on or off by checking /dtv/tvIsSleeping
