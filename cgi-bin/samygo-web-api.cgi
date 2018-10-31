@@ -337,7 +337,7 @@ if($params['challenge'] == $challenge){
 				}
 			} else {
 				header("Content-Type: application/json; charset=UTF-8");
-				echo json_encode(NULL);
+				echo json_encode(array());
 			}
 			break;
 	    case 'KEY':
