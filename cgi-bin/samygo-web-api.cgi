@@ -310,6 +310,10 @@ if($params['challenge'] == $challenge){
 							#process the first token to remove spaces, lowercase
 							$tokens[1]=preg_replace('/\s+/', '_', $tokens[1]);
 							$tokens[1]=strtolower($tokens[1]);
+							if($tokens[1] == "powerstate"){
+							      #powerstate is reported inconsistently as a name between Normal/Soft-Off. Fix that
+                                                              $tokens[1]="power_state";                                                                                                                                                     
+                                                        }            
 							$tokens[2]=trim($tokens[2]);
 						 
 							#save it into the output
